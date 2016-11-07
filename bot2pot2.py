@@ -19,7 +19,7 @@ def first_hit():
   global first_strike 
   first_strike = False
   pos = 500
-  force = 4000
+  force = 10000
   angle = 90
   socket_var.emit('player_input', {'position': pos, 'force': force, 'angle': angle})
   return
@@ -68,16 +68,16 @@ def select_rev_cut_coin( distance_dict, through_coins ):
   return selected_coin
 
 def calculate_striker_move(selected_pocket, selected_coin):
-	global coins
-	print '2 ', coins
-	invalid = False
+	#global coins
+	#print '2 ', coins
+	#invalid = False
 	coin_radius = 25
 	striker_radius = 30
 	strike_parameters = list()
 	slope = (selected_pocket[1]-selected_coin['y'])/(selected_pocket[0]-selected_coin['x'])
 	striker_anlge = 90 + (math.degrees(math.atan(slope)))
 	striker_pos = (slope*(153.2258 - selected_coin['x']))+selected_coin['y']
-	force = 800
+	force = 9000
 	if striker_pos > 806.4516 or striker_pos < 193.5484:
 		d = coin_radius + striker_radius
 		cut_pos_x = selected_coin['x'] - (d*(1/(math.sqrt(1+math.pow(slope,2)))))
@@ -90,12 +90,12 @@ def calculate_striker_move(selected_pocket, selected_coin):
 			striker_pos = 193.5484
 		slope = (cut_pos_y - striker_pos)/(cut_pos_x - 153.2258)
 		striker_anlge = 90 + (math.degrees(math.atan(slope)))
-		force = 1500
-	base_coins = find_base_coins(coins)
-	invalid = find_invalidity( striker_pos, base_coins) 
-	if invalid:
-		coins = remove_selected_coin(selected_coin) 
-		hit_coins(coins)
+		force = 9000
+	#base_coins = find_base_coins(coins)
+	#invalid = find_invalidity( striker_pos, base_coins) 
+	#if invalid:
+	#	coins = remove_selected_coin(selected_coin) 
+	#	hit_coins(coins)
 	strike_parameters = [ striker_pos, striker_anlge, force]
 	print 'strike', strike_parameters
 	return strike_parameters
@@ -116,11 +116,10 @@ def find_invalidity( striker_pos, base_coins):
 
 def remove_selected_coin(selected_coin):
 	global coins
-	print '3 ', coins
 	id  = selected_coin['id']
 	print 'id ', id
 	for i in range(0, len(coins)):
-		print coins[i]['id']
+		#print coins[i]['id']
 		if coins[i]['id'] == id:
 			del coins[i]
 			return coins
@@ -152,7 +151,7 @@ def near_coin_rev_cut_position(selected_coin, base_coins):
 	else:
 		selected_pocket = [32.2581, 967.7419] 
 	slope_bw_coin_and_pocket = (selected_coin['y'] - selected_pocket[1])/(selected_coin['x'] - selected_pocket[0])
-	cut_pos_x = selected_coin['x'] + (d*(1/(math.sqrt(1+math.pow(slope_bw_coin_and_pocket,2)))))
+	cut_pos_x = selected_coin['x'] - (d*(1/(math.sqrt(1+math.pow(slope_bw_coin_and_pocket,2)))))
 	cut_pos_y = (slope_bw_coin_and_pocket*(cut_pos_x - selected_coin['x'])) + selected_coin['y']
 	print 'striker cut position'
 	print cut_pos_x, cut_pos_y
@@ -167,7 +166,7 @@ def near_coin_rev_cut_position(selected_coin, base_coins):
 		print board_pos_x, board_pos_y 
 		striker_pos = ((-rev_slope)*(153.2258 - board_pos_x)) + board_pos_y
 		striker_anlge = 90 - (math.degrees(math.atan(rev_slope)))
-		force = 2500
+		force = 9000
 		print 'pos, angl, forc:'
 		print striker_pos, striker_anlge, force
 		invalid = find_invalidity( striker_pos, base_coins)
@@ -224,9 +223,8 @@ def your_turn_response(*args):
 	  #if first_strike == True:
 		#first_hit()
 		#return	
-	  global coins 
+	  #global coins 
 	  coins = args[0]['position']
-	  print '1 ', coins
 	  hit_coins(coins)
   
 print socket_var.connected
